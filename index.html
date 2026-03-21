@@ -2247,20 +2247,24 @@ window.onscroll=function(){
  document.getElementById('progressBar').style.width=scrolled+'%';
 };
 
-/* MOBILE SWIPE SUPPORT — RIGHT = NEXT, LEFT = PREVIOUS */
+/* SMART SWIPE — PREVENT PAGE CHANGE WHILE SCROLLING */
 
 let touchStartX = 0;
+let touchStartY = 0;
 let touchEndX = 0;
+let touchEndY = 0;
 
 document.addEventListener("touchstart", function(e){
 
     touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
 
 });
 
 document.addEventListener("touchend", function(e){
 
     touchEndX = e.changedTouches[0].screenX;
+    touchEndY = e.changedTouches[0].screenY;
 
     handleSwipe();
 
@@ -2268,25 +2272,39 @@ document.addEventListener("touchend", function(e){
 
 function handleSwipe(){
 
-    let swipeDistance = touchEndX - touchStartX;
+    let diffX = touchEndX - touchStartX;
+    let diffY = touchEndY - touchStartY;
 
-    /* Swipe RIGHT → Next Page */
+    /* Ignore vertical scroll */
 
-    if(swipeDistance > 50){
+    if(Math.abs(diffY) > Math.abs(diffX)){
+        return;
+    }
+
+    /* Minimum swipe distance */
+
+    if(Math.abs(diffX) < 50){
+        return;
+    }
+
+    /* Swipe LEFT → Next page */
+
+    if(diffX < 0){
 
         nextChapter();
 
     }
 
-    /* Swipe LEFT → Previous Page */
+    /* Swipe RIGHT → Previous page */
 
-    if(swipeDistance < -50){
+    if(diffX > 0){
 
         prevChapter();
 
     }
 
 }
+
 
 </script>
 
